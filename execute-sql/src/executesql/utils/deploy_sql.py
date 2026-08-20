@@ -15,12 +15,14 @@ def printWithTime(str):
 class deploy_sql:
   def __init__(self):
     #set variables use later
-    envName = os.getenv('ENV')
+    osENV = os.getenv('ENV')
+    if osENV is None:
+       osENV = "dv" 
 
     try:
       path = Path(__file__)
       configPath = path.parent.parent.parent.parent.absolute()
-      with open(os.path.join(configPath, "config", f"{envName}-config.json")) as f: 
+      with open(os.path.join(configPath, "config", f"{osENV}-config.json")) as f: 
         envConfig = (json.load(f))["envConfig"]
         
       envName = envConfig["envName"]
@@ -275,11 +277,10 @@ class deploy_sql:
                             printWithTime("There was an error executing the following statement:")
                             printWithTime(execMessage[:200])
 def main(workingFolder):
-    # Get the environment from the ENV environment variable
-    env = os.getenv('ENV')
     # Create an instance of deploy_sql
     deployer = deploy_sql()
-    
+
+    env = deployer.getEnvName()    
     # Get Databricks connection details
     dbHost = deployer.getDatabricksHost()
     dbHTTPPath = deployer.getDatabricksHTTPPath()
@@ -289,4 +290,11 @@ def main(workingFolder):
     deployer.run_scripts(dbHost, dbHTTPPath, dbToken, workingFolder, env)
 
 if __name__ == "__main__":
-    sys.exit(main("C:\\Users\\176017\\sources\\github\\Databricks\\execute-sql\\schema"))
+    # Ensure the user provided the argument to prevent an IndexError
+    if len(sys.argv) > 1:
+        user_argument = sys.argv[1]
+        #"C:\\Users\\176017\\sources\\github\\Databricks\\execute-sql\\schema"
+        main(user_argument)
+    else:
+        printWithTime("Error: Please provide a schema path.")
+    sys.exit(0)

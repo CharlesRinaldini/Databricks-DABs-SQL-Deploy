@@ -44,13 +44,16 @@ def printWithTime(str):
 class sql_helper:
   def __init__(self):
     #set variables use later
-    envName = os.getenv('ENV')
+    osENV = os.getenv('ENV')
+    if osENV is None:
+       osENV = "dv"
+
     self.setSpark()
 
     try:
       path = Path(__file__)
       configPath = path.parent.parent.parent.parent.absolute()
-      with open(os.path.join(configPath, "config", f"{envName}-config.json")) as f: 
+      with open(os.path.join(configPath, "config", f"{osENV}-config.json")) as f: 
         envConfig = (json.load(f))["envConfig"]
         
       scopeName = envConfig["scopeName"]
