@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS {env}_gold.sqldemo.demo_table (
     string_key STRING NOT NULL,
     test_string STRING NOT NULL, 
     modified_date TIMESTAMP NOT NULL,
+    updated_date TIMESTAMP NOT NULL,
     is_active BOOLEAN 
 );
